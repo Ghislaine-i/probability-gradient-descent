@@ -403,6 +403,9 @@ This project demonstrates how probability and optimization concepts can be appli
 
 - **Part 1:** EM fits a two-component Gaussian mixture and estimates group membership probabilities, while illustrating the challenges of overlapping distributions.
 - **Part 2:** Bayes' Theorem estimates the probability of positive sentiment from selected keywords in IMDb reviews.
+
+
+
 The manual calculations in Part 3 and the Python implementation in Part 4 produced identical results, confirming the correctness of our gradient descent derivation. The steadily decreasing error across iterations demonstrates that the model is successfully learning better parameters with each update.
 
 Together, the four parts connect mathematical theory with implementation, numerical verification, and interpretation of results.
