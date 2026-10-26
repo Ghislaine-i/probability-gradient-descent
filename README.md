@@ -27,28 +27,18 @@ probability-gradient-descent/
 ├── src/
 │   ├── em_algorithm.py
 │   ├── bayesian_sentiment.py
-<<<<<<< HEAD
-│   └──gradient_descent.py
-│   
-=======
 │   └── gradient_descent.py
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 ├── notebooks/
 │   └── analysis.ipynb
 ├── outputs/
-│   └── figures/
+│   ├── error_over_iterations.png.pdf
+│   └── parameter_changes.png
 ├── docs/
-│   ├── manual_calculations.pdf
-│   └── contributions.pdf
-├── README.md
-└── requirements.txt
+│   ├── manual_calculations_group_17.pdf
+│   └── formative_3_tam_tracker_group_17.pdf
+└── README.md
 ```
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 ---
 
 ## Part 1: Expectation-Maximization — Separating Height Populations
@@ -68,8 +58,6 @@ The analysis uses Galton family height data. We combine:
 
 This produces **1,139 unlabelled height observations**. The true group labels are used only to evaluate the results, not to train the model.
 
-<<<<<<< HEAD
-=======
 ### Model and Formulas
 
 ### Step 3: Core EM functions
@@ -113,7 +101,6 @@ $$
 $$
 
 Here $x$ is a height, $\sigma^2$ is a group's variance, and $\pi$ is a group's mixing proportion (the fraction of all heights that belong to it).
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 ### Method
 
 The algorithm starts with initial estimates for the means, variances, and mixing probabilities of the two Gaussian components. It then repeats two steps:
@@ -121,11 +108,7 @@ The algorithm starts with initial estimates for the means, variances, and mixing
 1. **E-step:** Calculate the responsibility of each component for every height observation.
 2. **M-step:** Update the component means, variances, and mixing probabilities using the responsibilities as weights.
 
-<<<<<<< HEAD
-The iterations continue until the change in log-likelihood falls below \(10^{-6}\).
-=======
 The iterations continue until the change in log-likelihood falls below $10^{-6}$.
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 The implementation includes functions for the E-step, M-step, log-likelihood calculation, and classification.
 
@@ -150,11 +133,7 @@ However, the height distributions overlap substantially. In this dataset, the me
 
 ### Classifying a New Height
 
-<<<<<<< HEAD
-The classification function returns the posterior probabilities for the two groups.
-=======
 The classification function returns the posterior probabilities $\gamma_{k}$ for the two groups, using the same formula as the E-step.
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 For a height of 66.0 inches, the reported probabilities are:
 
@@ -183,15 +162,9 @@ Apply Bayes' Theorem to estimate the probability that a movie review is positive
 
 We calculate:
 
-<<<<<<< HEAD
-\[
-P(\text{Positive}\mid\text{Keyword})
-\]
-=======
 $$
 P(\text{Positive} \mid \text{Keyword})
 $$
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 The implementation uses basic Python operations rather than machine-learning classification libraries.
 
@@ -222,30 +195,6 @@ The dataset is stored locally as `data/imdb_reviews.csv`.
 
 The formula used is:
 
-<<<<<<< HEAD
-\[
-P(\text{Positive}\mid\text{Keyword}) =
-\frac{P(\text{Keyword}\mid\text{Positive})
-\times P(\text{Positive})}
-{P(\text{Keyword})}
-\]
-
-Where:
-
-- **Prior:** \(P(\text{Positive})\) — the probability that a randomly selected review is positive.
-- **Likelihood:** \(P(\text{Keyword}\mid\text{Positive})\) — the probability that a positive review contains the keyword.
-- **Marginal:** \(P(\text{Keyword})\) — the probability that a randomly selected review contains the keyword.
-- **Posterior:** \(P(\text{Positive}\mid\text{Keyword})\) — the probability that a review is positive given that it contains the keyword.
-
-Because half of the dataset is positive:
-
-\[
-P(\text{Positive})=\frac{25,000}{50,000}=0.5
-\]
-
-### Results
-
-=======
 $$
 P(\text{Positive} \mid \text{Keyword}) =
 \frac{P(\text{Keyword} \mid \text{Positive}) \times P(\text{Positive})}
@@ -277,7 +226,6 @@ $$
 
 ### Results
 
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 | Keyword | Prior | Likelihood | Marginal | Posterior |
 |---|---:|---:|---:|---:|
 | excellent | 0.5000 | 0.1147 | 0.0710 | 80.74% |
@@ -298,18 +246,6 @@ The program reports the following values:
 - Marginal: 0.0710
 - Posterior: 80.74%
 
-<<<<<<< HEAD
-Using Bayes' Theorem:
-
-\[
-P(\text{Positive}\mid\text{excellent}) =
-\frac{P(\text{excellent}\mid\text{Positive})
-\times P(\text{Positive})}
-{P(\text{excellent})}
-\]
-
-The resulting posterior probability is approximately **80.74%** using the full-precision values.
-=======
 Substituting into Bayes' Theorem:
 
 $$
@@ -318,7 +254,6 @@ P(\text{Positive} \mid \text{excellent}) =
 $$
 
 The small difference from the reported 80.74% comes from rounding the inputs; the program uses the full-precision values.
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 This means that, within this dataset, reviews containing the word `excellent` are more likely to be positive than negative.
 
@@ -365,26 +300,6 @@ Manually calculate three gradient descent updates for a simple linear regression
 
 The model is:
 
-<<<<<<< HEAD
-\[
-\hat{y}=m_1x_1+m_2x_2+b
-\]
-
-Given:
-
-\[
-X=\begin{bmatrix}1&3\\4&10\end{bmatrix},
-\qquad
-y=\begin{bmatrix}5\\6\end{bmatrix}
-\]
-
-Initial parameters:
-
-- \(m=[-1,2]\)
-- \(b=1\)
-- Learning rate: \(\alpha=0.01\)
-- Number of observations: \(n=2\)
-=======
 $$
 \hat{y} = m_1 x_1 + m_2 x_2 + b
 $$
@@ -403,52 +318,11 @@ Initial parameters:
 - $b = 1$
 - Learning rate: $\alpha = 0.01$
 - Number of observations: $n = 2$
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 ### Cost Function and Gradients
 
 The Mean Squared Error (MSE) is:
 
-<<<<<<< HEAD
-\[
-J=\frac{1}{n}\|\hat{y}-y\|^2
-\]
-
-Define the error vector:
-
-\[
-e=\hat{y}-y=Xm+b\mathbf{1}-y
-\]
-
-The gradients are:
-
-\[
-\nabla_m J=\frac{2}{n}X^Te
-\]
-
-\[
-\frac{\partial J}{\partial b}
-=\frac{2}{n}\sum e_i
-\]
-
-Since \(n=2\), the factor \(2/n=1\), giving:
-
-\[
-\nabla_m J=X^Te,
-\qquad
-\frac{\partial J}{\partial b}=\sum e_i
-\]
-
-The parameters are updated using:
-
-\[
-m_{\text{new}}=m_{\text{old}}-\alpha\nabla_mJ
-\]
-
-\[
-b_{\text{new}}=b_{\text{old}}-\alpha\frac{\partial J}{\partial b}
-\]
-=======
 $$
 J = \frac{1}{n} \lVert \hat{y} - y \rVert^2
 $$
@@ -528,7 +402,6 @@ m_{\text{new}} = \begin{bmatrix} -1 \\ 2 \end{bmatrix} - 0.01 \begin{bmatrix} 45
 \qquad
 b_{\text{new}} = 1 - 0.01(12) = 0.88
 $$
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 ### Iteration Summary
 
@@ -543,7 +416,7 @@ Each update follows the same sequence:
 
 **Predict → Compute Error → Calculate MSE → Compute Gradients → Update Parameters**
 
-The full step-by-step calculations are documented in `docs/manual_calculations.pdf`.
+The full step-by-step calculations are documented in `docs/manual_calculations_group_17.pdf`.
 
 ### Observed Trend
 
@@ -565,17 +438,6 @@ Implement the manual gradient descent calculations in Python, verify the analyti
 
 The gradients are calculated directly from the formulas derived in Part 3:
 
-<<<<<<< HEAD
-\[
-\nabla_m J=X^Te,
-\qquad
-\frac{\partial J}{\partial b}=\sum e_i
-\]
-
-**2. Numerical verification with SciPy**
-
-The implementation uses `scipy.optimize.approx_fprime` to approximate the gradient numerically. The numerical results are compared with the analytical gradients to check their correctness, allowing for small numerical differences.
-=======
 $$
 \nabla_m J = X^T e,
 \qquad
@@ -591,7 +453,6 @@ $$
 $$
 
 The numerical results are compared with the analytical gradients to check their correctness, allowing for small numerical differences.
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
 
 **3. Explicit update loop**
 
@@ -611,11 +472,7 @@ The Python implementation reproduces the manual parameter updates to the display
 
 The script generates the following figures in `outputs/figures/`:
 
-<<<<<<< HEAD
-- **`params_over_iterations.png`** — shows how \(m_1\), \(m_2\), and \(b\) change over the three updates.
-=======
-- **`params_over_iterations.png`** — shows how $m_1$, $m_2$, and $b$ change over the three updates.
->>>>>>> 04dcae5d9158b0fc892f5560296d1a18d6bf11ed
+- **`parameter_changes.png`** — shows how $m_1$, $m_2$, and $b$ change over the three updates.
 - **`error_over_iterations.png`** — shows the change in MSE during gradient descent.
 
 The initial MSE is 61.0. It decreases to approximately 6.845 after the first update, 2.724 after the second update, and 2.391 after the third update.
@@ -662,7 +519,7 @@ python src/bayesian_sentiment.py
 python src/gradient_descent.py
 ```
 
-The manual gradient descent calculations are documented in `docs/manual_calculations.pdf`. The notebook in `notebooks/analysis.ipynb` can be used to explore the project interactively, provided the notebook contains the corresponding implementations.
+The manual gradient descent calculations are documented in `docs/manual_calculations_group_17.pdf`. The notebook in `notebooks/analysis.ipynb` can be used to explore the project interactively, provided the notebook contains the corresponding implementations.
 
 ---
 
@@ -685,11 +542,12 @@ This project was completed collaboratively by:
 - Ange Muhawenimana
 - Ineza Ghislaine
 
-See `docs/contributions.pdf` for the detailed breakdown of each member's contributions.
+See `docs/formative_3_team_tracker_group_17.pdf` for the detailed breakdown of each member's contributions.
 
 ## Dataset Attribution
 
-- **Galton family heights:** Galton family height data used for the Gaussian mixture analysis.
+- **Galton family heights:** Galton family height data used for the Gaussian mixture analysis. [Galton family heights Dataset on kaggle](https://www.kaggle.com/datasets/jacopoferretti/parents-heights-vs-children-heights-galton-data)
+
 - **IMDb Movie Reviews:** [IMDb Movie Reviews Dataset on Kaggle](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews).
 
 Please refer to the original dataset sources for licensing and usage conditions.
