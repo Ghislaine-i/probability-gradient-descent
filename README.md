@@ -35,7 +35,7 @@ probability-gradient-descent/
 │   └── parameter_changes.png
 ├── docs/
 │   ├── manual_calculations_group_17.pdf
-│   └── formative_3_tam_tracker_group_17.pdf
+│   └── formative_3_team_tracker_group_17.pdf
 └── README.md
 ```
 
