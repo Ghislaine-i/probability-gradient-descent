@@ -27,8 +27,7 @@ probability-gradient-descent/
 ├── src/
 │   ├── em_algorithm.py
 │   ├── bayesian_sentiment.py
-│   └──gradient_descent.py
-│   
+│   └── gradient_descent.py
 ├── notebooks/
 │   └── analysis.ipynb
 ├── outputs/
@@ -39,8 +38,6 @@ probability-gradient-descent/
 ├── README.md
 └── requirements.txt
 ```
-
-
 
 ---
 
@@ -61,6 +58,46 @@ The analysis uses Galton family height data. We combine:
 
 This produces **1,139 unlabelled height observations**. The true group labels are used only to evaluate the results, not to train the model.
 
+### Model and Formulas
+
+The heights are modeled as a mixture of two Gaussians with means $\mu_k$, variances $\sigma_k^2$, and mixing probabilities $\pi_k$ (where $\pi_1 + \pi_2 = 1$):
+
+$$
+p(x_i) = \sum_{k=1}^{2} \pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2)
+$$
+
+The Gaussian density is:
+
+$$
+\mathcal{N}(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+$$
+
+**E-step** — the responsibility of component $k$ for observation $x_i$:
+
+$$
+\gamma_{ik} = \frac{\pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2)}{\sum_{j=1}^{2} \pi_j \, \mathcal{N}(x_i \mid \mu_j, \sigma_j^2)}
+$$
+
+**M-step** — update the parameters using the responsibilities as weights, where $N_k = \sum_{i=1}^{N} \gamma_{ik}$:
+
+$$
+\mu_k = \frac{1}{N_k} \sum_{i=1}^{N} \gamma_{ik} \, x_i
+$$
+
+$$
+\sigma_k^2 = \frac{1}{N_k} \sum_{i=1}^{N} \gamma_{ik} \, (x_i - \mu_k)^2
+$$
+
+$$
+\pi_k = \frac{N_k}{N}
+$$
+
+**Log-likelihood** — used to monitor convergence:
+
+$$
+\ell(\theta) = \sum_{i=1}^{N} \ln \left( \sum_{k=1}^{2} \pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2) \right)
+$$
+
 ### Method
 
 The algorithm starts with initial estimates for the means, variances, and mixing probabilities of the two Gaussian components. It then repeats two steps:
@@ -68,7 +105,7 @@ The algorithm starts with initial estimates for the means, variances, and mixing
 1. **E-step:** Calculate the responsibility of each component for every height observation.
 2. **M-step:** Update the component means, variances, and mixing probabilities using the responsibilities as weights.
 
-The iterations continue until the change in log-likelihood falls below \(10^{-6}\).
+The iterations continue until the change in log-likelihood falls below $10^{-6}$.
 
 The implementation includes functions for the E-step, M-step, log-likelihood calculation, and classification.
 
@@ -93,7 +130,7 @@ However, the height distributions overlap substantially. In this dataset, the me
 
 ### Classifying a New Height
 
-The classification function returns the posterior probabilities for the two groups.
+The classification function returns the posterior probabilities $\gamma_{k}$ for the two groups, using the same formula as the E-step.
 
 For a height of 66.0 inches, the reported probabilities are:
 
@@ -122,9 +159,9 @@ Apply Bayes' Theorem to estimate the probability that a movie review is positive
 
 We calculate:
 
-\[
-P(\text{Positive}\mid\text{Keyword})
-\]
+$$
+P(\text{Positive} \mid \text{Keyword})
+$$
 
 The implementation uses basic Python operations rather than machine-learning classification libraries.
 
@@ -155,25 +192,34 @@ The dataset is stored locally as `data/imdb_reviews.csv`.
 
 The formula used is:
 
-\[
-P(\text{Positive}\mid\text{Keyword}) =
-\frac{P(\text{Keyword}\mid\text{Positive})
-\times P(\text{Positive})}
+$$
+P(\text{Positive} \mid \text{Keyword}) =
+\frac{P(\text{Keyword} \mid \text{Positive}) \times P(\text{Positive})}
 {P(\text{Keyword})}
-\]
+$$
 
 Where:
 
-- **Prior:** \(P(\text{Positive})\) — the probability that a randomly selected review is positive.
-- **Likelihood:** \(P(\text{Keyword}\mid\text{Positive})\) — the probability that a positive review contains the keyword.
-- **Marginal:** \(P(\text{Keyword})\) — the probability that a randomly selected review contains the keyword.
-- **Posterior:** \(P(\text{Positive}\mid\text{Keyword})\) — the probability that a review is positive given that it contains the keyword.
+- **Prior:** $P(\text{Positive})$ — the probability that a randomly selected review is positive.
+- **Likelihood:** $P(\text{Keyword} \mid \text{Positive})$ — the probability that a positive review contains the keyword.
+- **Marginal:** $P(\text{Keyword})$ — the probability that a randomly selected review contains the keyword.
+- **Posterior:** $P(\text{Positive} \mid \text{Keyword})$ — the probability that a review is positive given that it contains the keyword.
 
 Because half of the dataset is positive:
 
-\[
-P(\text{Positive})=\frac{25,000}{50,000}=0.5
-\]
+$$
+P(\text{Positive}) = \frac{25{,}000}{50{,}000} = 0.5
+$$
+
+The likelihood and marginal are estimated from counts:
+
+$$
+P(\text{Keyword} \mid \text{Positive}) = \frac{\text{positive reviews containing the keyword}}{\text{total positive reviews}}
+$$
+
+$$
+P(\text{Keyword}) = \frac{\text{all reviews containing the keyword}}{\text{total reviews}}
+$$
 
 ### Results
 
@@ -197,16 +243,14 @@ The program reports the following values:
 - Marginal: 0.0710
 - Posterior: 80.74%
 
-Using Bayes' Theorem:
+Substituting into Bayes' Theorem:
 
-\[
-P(\text{Positive}\mid\text{excellent}) =
-\frac{P(\text{excellent}\mid\text{Positive})
-\times P(\text{Positive})}
-{P(\text{excellent})}
-\]
+$$
+P(\text{Positive} \mid \text{excellent}) =
+\frac{0.1147 \times 0.5}{0.0710} \approx 0.81
+$$
 
-The resulting posterior probability is approximately **80.74%** using the full-precision values.
+The small difference from the reported 80.74% comes from rounding the inputs; the program uses the full-precision values.
 
 This means that, within this dataset, reviews containing the word `excellent` are more likely to be positive than negative.
 
@@ -253,67 +297,108 @@ Manually calculate three gradient descent updates for a simple linear regression
 
 The model is:
 
-\[
-\hat{y}=m_1x_1+m_2x_2+b
-\]
+$$
+\hat{y} = m_1 x_1 + m_2 x_2 + b
+$$
 
 Given:
 
-\[
-X=\begin{bmatrix}1&3\\4&10\end{bmatrix},
+$$
+X = \begin{bmatrix} 1 & 3 \\ 4 & 10 \end{bmatrix},
 \qquad
-y=\begin{bmatrix}5\\6\end{bmatrix}
-\]
+y = \begin{bmatrix} 5 \\ 6 \end{bmatrix}
+$$
 
 Initial parameters:
 
-- \(m=[-1,2]\)
-- \(b=1\)
-- Learning rate: \(\alpha=0.01\)
-- Number of observations: \(n=2\)
+- $m = [-1, 2]$
+- $b = 1$
+- Learning rate: $\alpha = 0.01$
+- Number of observations: $n = 2$
 
 ### Cost Function and Gradients
 
 The Mean Squared Error (MSE) is:
 
-\[
-J=\frac{1}{n}\|\hat{y}-y\|^2
-\]
+$$
+J = \frac{1}{n} \lVert \hat{y} - y \rVert^2
+$$
 
 Define the error vector:
 
-\[
-e=\hat{y}-y=Xm+b\mathbf{1}-y
-\]
+$$
+e = \hat{y} - y = Xm + b\mathbf{1} - y
+$$
 
 The gradients are:
 
-\[
-\nabla_m J=\frac{2}{n}X^Te
-\]
+$$
+\nabla_m J = \frac{2}{n} X^T e
+$$
 
-\[
-\frac{\partial J}{\partial b}
-=\frac{2}{n}\sum e_i
-\]
+$$
+\frac{\partial J}{\partial b} = \frac{2}{n} \sum_i e_i
+$$
 
-Since \(n=2\), the factor \(2/n=1\), giving:
+Since $n = 2$, the factor $2/n = 1$, giving:
 
-\[
-\nabla_m J=X^Te,
+$$
+\nabla_m J = X^T e,
 \qquad
-\frac{\partial J}{\partial b}=\sum e_i
-\]
+\frac{\partial J}{\partial b} = \sum_i e_i
+$$
 
 The parameters are updated using:
 
-\[
-m_{\text{new}}=m_{\text{old}}-\alpha\nabla_mJ
-\]
+$$
+m_{\text{new}} = m_{\text{old}} - \alpha \, \nabla_m J
+$$
 
-\[
-b_{\text{new}}=b_{\text{old}}-\alpha\frac{\partial J}{\partial b}
-\]
+$$
+b_{\text{new}} = b_{\text{old}} - \alpha \, \frac{\partial J}{\partial b}
+$$
+
+### Worked Example: Update 1
+
+**Predict:**
+
+$$
+\hat{y} = Xm + b\mathbf{1} =
+\begin{bmatrix} 1 & 3 \\ 4 & 10 \end{bmatrix}
+\begin{bmatrix} -1 \\ 2 \end{bmatrix} + 1
+= \begin{bmatrix} 6 \\ 17 \end{bmatrix}
+$$
+
+**Error:**
+
+$$
+e = \hat{y} - y = \begin{bmatrix} 6 - 5 \\ 17 - 6 \end{bmatrix} = \begin{bmatrix} 1 \\ 11 \end{bmatrix}
+$$
+
+**MSE:**
+
+$$
+J = \frac{1^2 + 11^2}{2} = 61
+$$
+
+**Gradients:**
+
+$$
+\nabla_m J = X^T e =
+\begin{bmatrix} 1 & 4 \\ 3 & 10 \end{bmatrix}
+\begin{bmatrix} 1 \\ 11 \end{bmatrix}
+= \begin{bmatrix} 45 \\ 113 \end{bmatrix},
+\qquad
+\frac{\partial J}{\partial b} = 1 + 11 = 12
+$$
+
+**Update:**
+
+$$
+m_{\text{new}} = \begin{bmatrix} -1 \\ 2 \end{bmatrix} - 0.01 \begin{bmatrix} 45 \\ 113 \end{bmatrix} = \begin{bmatrix} -1.45 \\ 0.87 \end{bmatrix},
+\qquad
+b_{\text{new}} = 1 - 0.01(12) = 0.88
+$$
 
 ### Iteration Summary
 
@@ -350,15 +435,21 @@ Implement the manual gradient descent calculations in Python, verify the analyti
 
 The gradients are calculated directly from the formulas derived in Part 3:
 
-\[
-\nabla_m J=X^Te,
+$$
+\nabla_m J = X^T e,
 \qquad
-\frac{\partial J}{\partial b}=\sum e_i
-\]
+\frac{\partial J}{\partial b} = \sum_i e_i
+$$
 
 **2. Numerical verification with SciPy**
 
-The implementation uses `scipy.optimize.approx_fprime` to approximate the gradient numerically. The numerical results are compared with the analytical gradients to check their correctness, allowing for small numerical differences.
+The implementation uses `scipy.optimize.approx_fprime` to approximate the gradient numerically using finite differences:
+
+$$
+\frac{\partial J}{\partial \theta_j} \approx \frac{J(\theta + \varepsilon \, \mathbf{e}_j) - J(\theta)}{\varepsilon}
+$$
+
+The numerical results are compared with the analytical gradients to check their correctness, allowing for small numerical differences.
 
 **3. Explicit update loop**
 
@@ -378,7 +469,7 @@ The Python implementation reproduces the manual parameter updates to the display
 
 The script generates the following figures in `outputs/figures/`:
 
-- **`params_over_iterations.png`** — shows how \(m_1\), \(m_2\), and \(b\) change over the three updates.
+- **`params_over_iterations.png`** — shows how $m_1$, $m_2$, and $b$ change over the three updates.
 - **`error_over_iterations.png`** — shows the change in MSE during gradient descent.
 
 The initial MSE is 61.0. It decreases to approximately 6.845 after the first update, 2.724 after the second update, and 2.391 after the third update.
