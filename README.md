@@ -60,44 +60,47 @@ This produces **1,139 unlabelled height observations**. The true group labels ar
 
 ### Model and Formulas
 
-The heights are modeled as a mixture of two Gaussians with means $\mu_k$, variances $\sigma_k^2$, and mixing probabilities $\pi_k$ (where $\pi_1 + \pi_2 = 1$):
+### Step 3: Core EM functions
+
+- **`gaussian_pdf`** is the normal (bell-curve) density for a given mean and variance.
 
 $$
-p(x_i) = \sum_{k=1}^{2} \pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2)
+\boxed{\text{density} = \frac{1}{\sqrt{2\pi\sigma^2}} \; e^{-\frac{(x - \text{mean})^2}{2\sigma^2}}}
 $$
 
-The Gaussian density is:
+- **`weighted_densities`** computes the weighted density of each group for every height.
 
 $$
-\mathcal{N}(x \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+\boxed{\text{weighted density} = \pi \times \text{density}}
 $$
 
-**E-step** — the responsibility of component $k$ for observation $x_i$:
+- **`log_likelihood`** measures how well the current model explains the data (higher is better).
 
 $$
-\gamma_{ik} = \frac{\pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2)}{\sum_{j=1}^{2} \pi_j \, \mathcal{N}(x_i \mid \mu_j, \sigma_j^2)}
+\boxed{\text{log-likelihood} = \sum_{\text{heights}} \log(\text{sum of weighted densities of all groups})}
 $$
 
-**M-step** — update the parameters using the responsibilities as weights, where $N_k = \sum_{i=1}^{N} \gamma_{ik}$:
+- **`e_step`** (**Expectation**) gives each height a *responsibility*: the probability it belongs to each group, using Bayes' theorem.
 
 $$
-\mu_k = \frac{1}{N_k} \sum_{i=1}^{N} \gamma_{ik} \, x_i
+\boxed{\text{responsibility} = \frac{\text{weighted density of x in this group}}{\text{sum of weighted densities that group}}}
+$$
+
+- **`m_step`** (**Maximization**) re-estimates each group's mean, variance and mixing proportion, using the responsibilities as weights.
+
+$$
+\boxed{\text{new mean} = \frac{\sum (\text{responsibility} \times x)}{\sum \text{responsibility}}}
 $$
 
 $$
-\sigma_k^2 = \frac{1}{N_k} \sum_{i=1}^{N} \gamma_{ik} \, (x_i - \mu_k)^2
+\boxed{\text{new } \sigma^2 = \frac{\sum \big(\text{responsibility} \times (x - \text{new mean})^2\big)}{\sum \text{responsibility}}}
 $$
 
 $$
-\pi_k = \frac{N_k}{N}
+\boxed{\text{new } \pi = \frac{\sum \text{responsibility}}{\text{number of heights}}}
 $$
 
-**Log-likelihood** — used to monitor convergence:
-
-$$
-\ell(\theta) = \sum_{i=1}^{N} \ln \left( \sum_{k=1}^{2} \pi_k \, \mathcal{N}(x_i \mid \mu_k, \sigma_k^2) \right)
-$$
-
+Here $x$ is a height, $\sigma^2$ is a group's variance, and $\pi$ is a group's mixing proportion (the fraction of all heights that belong to it).
 ### Method
 
 The algorithm starts with initial estimates for the means, variances, and mixing probabilities of the two Gaussian components. It then repeats two steps:
